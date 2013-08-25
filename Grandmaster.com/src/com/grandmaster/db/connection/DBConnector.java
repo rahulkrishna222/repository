@@ -31,6 +31,7 @@ public class DBConnector {
             logger.info("Completed Loading mysql driver to classloader : " + DB_DRIVER_CLASS);
         } catch (ClassNotFoundException e) {
             logger.error("Exception while loading mysql driver to classloader : " + DB_DRIVER_CLASS, e);
+            System.exit(1);
         }
         loadProperties();// Load DB properties
     }
@@ -38,11 +39,11 @@ public class DBConnector {
     private static boolean loadProperties() {
         logger.info("Loading DB properties from file");
         grandMasterProps = new Properties();
-        try {
+        try {            
             grandMasterProps.load(DBConnector.class.getResourceAsStream(DB_PROPERTY_FILENAME));
             logger.info("DB properties loaded successfully");
-        } catch (IOException ioe) {
-            logger.error("IOException while loading database properties, filename : " + DB_PROPERTY_FILENAME, ioe);
+        } catch (IOException | NullPointerException ioe) {
+            logger.error("IOException | NullPointerExcetion while loading database properties, filename : " + DB_PROPERTY_FILENAME, ioe);
             grandMasterProps.putAll(getDefaultDBConfig());
         }
         System.setProperties(grandMasterProps);
