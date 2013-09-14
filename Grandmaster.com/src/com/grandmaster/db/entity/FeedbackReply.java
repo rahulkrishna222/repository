@@ -8,11 +8,15 @@ public class FeedbackReply {
 
 	private final String INSERT_SQL_QUERY = "INSERT INTO "
 			+ FEEDBACK_TBL_NAME
-			+ "('id','feedback_id', 'replied_by','reply_message','time_of_reply','modification_time') VALUES ( ";
+			+ "(id,feedback_id,replied_by,reply_message,time_of_reply,modification_time) VALUES ( ";
 	
 	private final String UPDATE_SQL_QUERY = "UPDATE feedback_reply SET ";
 	
 	private final String DELETE_SQL_QUERY = "DELETE FROM feedback_reply where ";
+
+	private final String INSERT_SQL_QUERY_V = "INSERT INTO "
+			+ FEEDBACK_TBL_NAME
+			+ "(id,feedback_id,replied_by,reply_message,time_of_reply,modification_time) VALUES (null,?,?,?,?,?)";
 
 	private Integer id;
 	private Integer feedbackId;
@@ -135,15 +139,15 @@ public class FeedbackReply {
 
 	public String getInsertStatement() {
 		final String FIELD_SEP = " , ";
+		final String FIELD_QUO = "'";
 		String query = INSERT_SQL_QUERY;
 
 		// Update values
 		query += "null" + FIELD_SEP;
-		query += this.getFeedbackId() + FIELD_SEP;
 		query += this.getRepliedByUser() + FIELD_SEP;
-		query += this.getReponse() + FIELD_SEP;
-		query += this.getTimeOfReply() + FIELD_SEP;
-		query += this.getModificationTime();
+		query += "'" + this.getReponse() + "'" +FIELD_SEP;
+		query += "'" + this.getTimeOfReply() + "'" +FIELD_SEP;
+		query += "'" + this.getModificationTime() + "'";
 		return query + " );";
 	}
 

@@ -1,13 +1,20 @@
 package com.grandmaster.db;
 
+import java.sql.SQLException;
+import java.util.List;
+
+import com.grandmaster.db.entity.Feedback;
+
 public interface DBOperation {
 
-    public Integer save();
+    public Object save(Object entity);
 
-    public Integer update();
+    public Object update(Object entity, int id);
 
-    public Integer delete();
+    public Integer delete(int id);
 
-    public void select(Integer id);
+    public Object select(Integer id);
+
+    public List<Object> findAll(Integer start, Integer count) throws SQLException;
 
 }

@@ -2,6 +2,16 @@ package com.grandmaster.db.entity;
 
 public class GameProgress {
 
+    private final String TBL_NAME = "game_progress";
+
+    private final String INSERT_SQL_QUERY = "INSERT INTO " + TBL_NAME + "(id,match_id,opponent_A_element_pos,opponent_B_element_pos) VALUES ( ";
+	
+    private final String UPDATE_SQL_QUERY = "UPDATE " + TBL_NAME + " SET ";
+	
+    private final String DELETE_SQL_QUERY = "DELETE FROM " + TBL_NAME + " where ";
+    
+    private final String INSERT_SQL_QUERY_V = "INSERT INTO " + TBL_NAME + "(id,match_id,opponent_A_element_pos,opponent_B_element_pos) VALUES (null,?,?,?)";
+
     private Integer id;
     private Integer matchId;
     private String  opponentAPosition;
@@ -83,6 +93,22 @@ public class GameProgress {
     public void setOpponentBPosition(String opponentBPosition) {
         this.opponentBPosition = opponentBPosition;
     }
+
+    public String getInsertStatement() {
+		final String FIELD_SEP = " , ";
+		final String FIELD_QUO = "'";
+		String query = INSERT_SQL_QUERY;
+
+		// Update values
+		query += "null" + FIELD_SEP;
+		query += this.getMatchId() + FIELD_SEP;
+		query += FIELD_QUO + this.getOpponentAPosition() + FIELD_QUO + FIELD_SEP;
+		query += FIELD_QUO + this.getOpponentBPosition() + FIELD_QUO;
+		return query + " );";
+    }
+
+
+
 
     /*
      * (non-Javadoc)

@@ -4,6 +4,16 @@ import java.sql.Timestamp;
 
 public class GameMatchHistory {
 
+    private final String TBL_NAME = "game_match_history";
+
+    private final String INSERT_SQL_QUERY = "INSERT INTO " + TBL_NAME + "(id,userAId,userBId,game_started,game_finished,winner,game_status) VALUES ( ";
+	
+    private final String UPDATE_SQL_QUERY = "UPDATE " + TBL_NAME + " SET ";
+	
+    private final String DELETE_SQL_QUERY = "DELETE FROM " + TBL_NAME + " where ";
+
+    private final String INSERT_SQL_QUERY_V = "INSERT INTO " + TBL_NAME + "(id,userAId,userBId,game_started,game_finished,winner,game_status) VALUES (null,?,?,?,?,?,?)";
+
     private Integer   id;
     private Integer   userA;
     private Integer   userB;
@@ -25,8 +35,7 @@ public class GameMatchHistory {
      * @param gameStarted
      * @param gameEnded
      */
-    public GameMatchHistory(Integer id, Integer userA, Integer userB, Integer winnerUser, char gameStatus, Timestamp gameStarted,
-            Timestamp gameEnded) {
+    public GameMatchHistory(Integer id, Integer userA, Integer userB, Integer winnerUser, char gameStatus, Timestamp gameStarted, Timestamp gameEnded) {
         this.id = id;
         this.userA = userA;
         this.userB = userB;
@@ -140,6 +149,23 @@ public class GameMatchHistory {
     public void setGameEnded(Timestamp gameEnded) {
         this.gameEnded = gameEnded;
     }
+
+    public String getInsertStatement() {
+		final String FIELD_SEP = " , ";
+		final String FIELD_QUO = "'";
+		String query = INSERT_SQL_QUERY;
+
+		// Update values
+		query += "null" + FIELD_SEP;
+		query += this.getUserA() + FIELD_SEP;
+		query += this.getUserB() + FIELD_SEP;
+		query += "'" + this.getGameStarted() + "'" + FIELD_SEP;
+		query += "'" + this.getGameEnded() + "'" + FIELD_SEP;
+		query += this.getWinnerUser() + FIELD_SEP; 
+		query += "'" + this.getGameStatus() + "'";
+		return query + " );";
+	}
+
 
     /*
      * (non-Javadoc)

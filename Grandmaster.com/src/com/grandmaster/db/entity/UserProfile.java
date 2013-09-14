@@ -4,22 +4,36 @@ import java.sql.Timestamp;
 
 public class UserProfile {
 
-    private Integer   userId;
-    private String    firstName;
-    private String    lastName;
-    private Timestamp dob;
-    private String    email;
-    private String    address1;
-    private String    address2;
-    private String    city;
-    private String    state;
-    private String    zipCode;
-    private String    country;
-    private Long      mobileNumber;
-    private Long      homeNumber;
-    private char      isAdmin;
-    private Timestamp creationTime;
-    private Timestamp modificationTime;
+    public final static String TBL_NAME           = "user_profile";
+
+    public final static String INSERT_SQL_QUERY   = "INSERT INTO "
+                                                          + TBL_NAME
+                                                          + "(id,first_name,last_name,dob,email,address1,address2,city,state,zip,country,mobile_number,home_number,creation_time,modification_time,is_admin) VALUES ( ";
+
+    public final static String UPDATE_SQL_QUERY   = "UPDATE " + TBL_NAME + " SET ";
+
+    public final static String DELETE_SQL_QUERY   = "DELETE FROM " + TBL_NAME + " where ";
+
+    public final static String INSERT_SQL_QUERY_V = "INSERT INTO "
+                                                          + TBL_NAME
+                                                          + "(id,first_name,last_name,dob,email,address1,address2,city,state,zip,country,mobile_number,home_number,creation_time,modification_time,is_admin) VALUES (null,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+    private Integer            userId;
+    private String             firstName;
+    private String             lastName;
+    private Timestamp          dob;
+    private String             email;
+    private String             address1;
+    private String             address2;
+    private String             city;
+    private String             state;
+    private String             zipCode;
+    private String             country;
+    private Long               mobileNumber;
+    private Long               homeNumber;
+    private char               isAdmin;
+    private Timestamp          creationTime;
+    private Timestamp          modificationTime;
 
     public UserProfile() {
         // TODO Auto-generated constructor stub
@@ -304,6 +318,29 @@ public class UserProfile {
         this.modificationTime = modificationTime;
     }
 
+    public String getInsertStatement() {
+        final String FIELD_SEP = " , ";
+        final String FIELD_QUO = "'";
+        String query = INSERT_SQL_QUERY;
+
+        // Update values
+        query += "null" + FIELD_SEP;
+        query += FIELD_QUO + this.getFirstName() + FIELD_QUO + FIELD_SEP;
+        query += FIELD_QUO + this.getLastName() + FIELD_QUO + FIELD_SEP;
+        query += FIELD_QUO + this.getDob() + FIELD_QUO + FIELD_SEP;
+        query += FIELD_QUO + this.getEmail() + FIELD_QUO + FIELD_SEP;
+        query += FIELD_QUO + this.getCity() + FIELD_QUO + FIELD_SEP;
+        query += FIELD_QUO + this.getState() + FIELD_QUO + FIELD_SEP;
+        query += FIELD_QUO + this.getZipCode() + FIELD_QUO + FIELD_SEP;
+        query += FIELD_QUO + this.getCountry() + FIELD_QUO + FIELD_SEP;
+        query += this.getMobileNumber() + FIELD_SEP;
+        query += this.getHomeNumber() + FIELD_SEP;
+        query += FIELD_QUO + this.getCreationTime() + FIELD_QUO + FIELD_SEP;
+        query += FIELD_QUO + this.getModificationTime() + FIELD_QUO + FIELD_SEP;
+        query += FIELD_QUO + this.getIsAdmin() + FIELD_QUO;
+        return query + " );";
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -317,7 +354,9 @@ public class UserProfile {
                 + ", isAdmin=" + isAdmin + ", creationTime=" + creationTime + ", modificationTime=" + modificationTime + "]";
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -343,7 +382,9 @@ public class UserProfile {
         return result;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -469,5 +510,4 @@ public class UserProfile {
         return true;
     }
 
-    
 }

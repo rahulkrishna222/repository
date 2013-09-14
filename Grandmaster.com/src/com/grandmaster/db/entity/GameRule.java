@@ -2,6 +2,16 @@ package com.grandmaster.db.entity;
 
 public class GameRule {
 
+    private final String TBL_NAME = "game_rule";
+
+    private final String INSERT_SQL_QUERY = "INSERT INTO " + TBL_NAME + "(id,element,description,possible_steps) VALUES ( ";
+	
+    private final String UPDATE_SQL_QUERY = "UPDATE " + TBL_NAME + " SET ";
+	
+    private final String DELETE_SQL_QUERY = "DELETE FROM " + TBL_NAME + " where ";
+    
+    private final String INSERT_SQL_QUERY_V = "INSERT INTO " + TBL_NAME + "(id,element,description,possible_steps) VALUES (null,?,?,?)";
+
     private Integer id;
     private String  element;
     private String  description;
@@ -83,6 +93,21 @@ public class GameRule {
     public void setPossible_steps(String possible_steps) {
         this.possible_steps = possible_steps;
     }
+
+    public String getInsertStatement() {
+		final String FIELD_SEP = " , ";
+		final String FIELD_QUO = "'";
+		String query = INSERT_SQL_QUERY;
+
+		// Update values
+		query += "null" + FIELD_SEP;
+		query += this.getElement() + FIELD_SEP;
+		query += FIELD_QUO + this.getDescription() + FIELD_QUO + FIELD_SEP;
+		query += FIELD_QUO + this.getPossible_steps() + FIELD_QUO;
+		return query + " );";
+    }
+
+
 
     /*
      * (non-Javadoc)
