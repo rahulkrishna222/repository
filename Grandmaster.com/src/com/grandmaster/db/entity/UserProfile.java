@@ -10,13 +10,15 @@ public class UserProfile {
                                                           + TBL_NAME
                                                           + "(id,first_name,last_name,dob,email,address1,address2,city,state,zip,country,mobile_number,home_number,creation_time,modification_time,is_admin) VALUES ( ";
 
-    public final static String UPDATE_SQL_QUERY   = "UPDATE " + TBL_NAME + " SET ";
+    public final static String UPDATE_SQL_QUERY   = "UPDATE "
+                                                          + TBL_NAME
+                                                          + " SET first_name = ?,last_name = ?,dob = ?,email = ?,address1 = ?,address2 = ?,city = ?,state = ?,zip = ?,country = ?,mobile_number = ?,home_number = ?,creation_time = ?,modification_time = ?,is_admin = ? WHERE id = ?";
 
     public final static String DELETE_SQL_QUERY   = "DELETE FROM " + TBL_NAME + " where ";
 
     public final static String INSERT_SQL_QUERY_V = "INSERT INTO "
                                                           + TBL_NAME
-                                                          + "(id,first_name,last_name,dob,email,address1,address2,city,state,zip,country,mobile_number,home_number,creation_time,modification_time,is_admin) VALUES (null,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                                                          + "(id,first_name,last_name,dob,email,address1,address2,city,state,zip,country,mobile_number,home_number,creation_time,modification_time,is_admin) VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     private Integer            userId;
     private String             firstName;
@@ -316,6 +318,10 @@ public class UserProfile {
      */
     public void setModificationTime(Timestamp modificationTime) {
         this.modificationTime = modificationTime;
+    }
+
+    public boolean isAdmin() {
+        return (isAdmin == 'Y');
     }
 
     public String getInsertStatement() {

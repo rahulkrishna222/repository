@@ -2,15 +2,15 @@ package com.grandmaster.db.entity;
 
 public class GameRule {
 
-    private final String TBL_NAME = "game_rule";
+	public final String TBL_NAME = "game_rule";
 
-    private final String INSERT_SQL_QUERY = "INSERT INTO " + TBL_NAME + "(id,element,description,possible_steps) VALUES ( ";
+	public final String INSERT_SQL_QUERY = "INSERT INTO " + TBL_NAME + "(id,element,description,possible_steps) VALUES ( ";
 	
-    private final String UPDATE_SQL_QUERY = "UPDATE " + TBL_NAME + " SET ";
+	public final String UPDATE_SQL_QUERY = "UPDATE " + TBL_NAME + " SET element = ?,description = ?,possible_steps = ? WHERE id = ?";
 	
-    private final String DELETE_SQL_QUERY = "DELETE FROM " + TBL_NAME + " where ";
+	public final String DELETE_SQL_QUERY = "DELETE FROM " + TBL_NAME + " where ";
     
-    private final String INSERT_SQL_QUERY_V = "INSERT INTO " + TBL_NAME + "(id,element,description,possible_steps) VALUES (null,?,?,?)";
+	public final String INSERT_SQL_QUERY_V = "INSERT INTO " + TBL_NAME + "(id,element,description,possible_steps) VALUES (null, ?, ?, ?)";
 
     private Integer id;
     private String  element;

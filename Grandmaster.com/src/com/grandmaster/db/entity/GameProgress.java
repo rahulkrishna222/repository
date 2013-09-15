@@ -2,15 +2,15 @@ package com.grandmaster.db.entity;
 
 public class GameProgress {
 
-    private final String TBL_NAME = "game_progress";
+	public final String TBL_NAME = "game_progress";
 
-    private final String INSERT_SQL_QUERY = "INSERT INTO " + TBL_NAME + "(id,match_id,opponent_A_element_pos,opponent_B_element_pos) VALUES ( ";
+	public final String INSERT_SQL_QUERY = "INSERT INTO " + TBL_NAME + "(id,match_id,opponent_A_element_pos,opponent_B_element_pos) VALUES ( ";
 	
-    private final String UPDATE_SQL_QUERY = "UPDATE " + TBL_NAME + " SET ";
+	public final String UPDATE_SQL_QUERY = "UPDATE " + TBL_NAME + " SET match_id = ?,opponent_A_element_pos = ?,opponent_B_element_pos = ? WHERE id = ?";
 	
-    private final String DELETE_SQL_QUERY = "DELETE FROM " + TBL_NAME + " where ";
+	public final String DELETE_SQL_QUERY = "DELETE FROM " + TBL_NAME + " where ";
     
-    private final String INSERT_SQL_QUERY_V = "INSERT INTO " + TBL_NAME + "(id,match_id,opponent_A_element_pos,opponent_B_element_pos) VALUES (null,?,?,?)";
+	public final String INSERT_SQL_QUERY_V = "INSERT INTO " + TBL_NAME + "(id,match_id,opponent_A_element_pos,opponent_B_element_pos) VALUES (null, ?, ?, ?)";
 
     private Integer id;
     private Integer matchId;

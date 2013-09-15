@@ -4,26 +4,31 @@ import java.sql.Timestamp;
 
 public class Login {
 
-    private final String TBL_NAME = "login";
+    public final static String TBL_NAME           = "login";
 
-    private final String INSERT_SQL_QUERY = "INSERT INTO " + TBL_NAME + "(id,username,password_hash,old_password_1,old_password_2,old_password_3,creation_time,modification_time,status) VALUES ( ";
-	
-    private final String UPDATE_SQL_QUERY = "UPDATE " + TBL_NAME + " SET ";
-	
-    private final String DELETE_SQL_QUERY = "DELETE FROM " + TBL_NAME + " where ";
-    
-    private final String INSERT_SQL_QUERY_V = "INSERT INTO " + TBL_NAME + "(id,username,password_hash,old_password_1,old_password_2,old_password_3,creation_time,modification_time,status) VALUES (null,?,?,?,?,?,?,?,?)";
-    
+    public final String        INSERT_SQL_QUERY   = "INSERT INTO "
+                                                          + TBL_NAME
+                                                          + "(id,username,password_hash,old_password_1,old_password_2,old_password_3,creation_time,modification_time,status) VALUES ( ";
 
-    private Integer   userId;
-    private String    email;
-    private String    passwordHash;
-    private String    oldPasswordHash1;
-    private String    oldPasswordHash2;
-    private String    oldPasswordHash3;
-    private char      status;
-    private Timestamp creationTime;
-    private Timestamp modificationTime;
+    public final String        UPDATE_SQL_QUERY   = "UPDATE "
+                                                          + TBL_NAME
+                                                          + " SET username = ?,password_hash = ?,old_password_1 = ?,old_password_2 = ?,old_password_3 = ?,creation_time = ?,modification_time = ?,status = ? WHERE id = ?";
+
+    public final String        DELETE_SQL_QUERY   = "DELETE FROM " + TBL_NAME + " where ";
+
+    public final String        INSERT_SQL_QUERY_V = "INSERT INTO "
+                                                          + TBL_NAME
+                                                          + "(id,username,password_hash,old_password_1,old_password_2,old_password_3,creation_time,modification_time,status) VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    private Integer            userId;
+    private String             email;
+    private String             passwordHash;
+    private String             oldPasswordHash1;
+    private String             oldPasswordHash2;
+    private String             oldPasswordHash3;
+    private char               status;
+    private Timestamp          creationTime;
+    private Timestamp          modificationTime;
 
     public Login() {
         // TODO Auto-generated constructor stub
@@ -187,26 +192,24 @@ public class Login {
     public void setModificationTime(Timestamp modificationTime) {
         this.modificationTime = modificationTime;
     }
-    
+
     public String getInsertStatement() {
-		final String FIELD_SEP = " , ";
-		final String FIELD_QUO = "'";
-		String query = INSERT_SQL_QUERY;
+        final String FIELD_SEP = " , ";
+        final String FIELD_QUO = "'";
+        String query = INSERT_SQL_QUERY;
 
-		// Update values
-		query += "null" + FIELD_SEP;
-		query += this.getEmail() + FIELD_SEP;
-		query += FIELD_QUO + this.getPasswordHash() + FIELD_QUO + FIELD_SEP;
-		query += FIELD_QUO + this.getOldPasswordHash1() + FIELD_QUO + FIELD_SEP;
-		query += FIELD_QUO + this.getOldPasswordHash2() + FIELD_QUO + FIELD_SEP;
-		query += FIELD_QUO + this.getOldPasswordHash3() + FIELD_QUO + FIELD_SEP;
-		query += FIELD_QUO + this.getCreationTime() + FIELD_QUO + FIELD_SEP;
-		query += FIELD_QUO + this.getModificationTime() + FIELD_QUO + FIELD_SEP;
-		query += FIELD_QUO + this.getStatus() + FIELD_QUO;
-		return query + " );";
+        // Update values
+        query += "null" + FIELD_SEP;
+        query += this.getEmail() + FIELD_SEP;
+        query += FIELD_QUO + this.getPasswordHash() + FIELD_QUO + FIELD_SEP;
+        query += FIELD_QUO + this.getOldPasswordHash1() + FIELD_QUO + FIELD_SEP;
+        query += FIELD_QUO + this.getOldPasswordHash2() + FIELD_QUO + FIELD_SEP;
+        query += FIELD_QUO + this.getOldPasswordHash3() + FIELD_QUO + FIELD_SEP;
+        query += FIELD_QUO + this.getCreationTime() + FIELD_QUO + FIELD_SEP;
+        query += FIELD_QUO + this.getModificationTime() + FIELD_QUO + FIELD_SEP;
+        query += FIELD_QUO + this.getStatus() + FIELD_QUO;
+        return query + " );";
     }
-
-
 
     /*
      * (non-Javadoc)

@@ -4,15 +4,15 @@ import java.sql.Timestamp;
 
 public class GameMatchHistory {
 
-    private final String TBL_NAME = "game_match_history";
+	public final String TBL_NAME = "game_match_history";
 
-    private final String INSERT_SQL_QUERY = "INSERT INTO " + TBL_NAME + "(id,userAId,userBId,game_started,game_finished,winner,game_status) VALUES ( ";
+	public final String INSERT_SQL_QUERY = "INSERT INTO " + TBL_NAME + "(id,userAId,userBId,game_started,game_finished,winner,game_status) VALUES ( ";
 	
-    private final String UPDATE_SQL_QUERY = "UPDATE " + TBL_NAME + " SET ";
+	public final String UPDATE_SQL_QUERY = "UPDATE " + TBL_NAME + " SET userAId = ?,userBId = ?,game_started = ?,game_finished = ?,winner = ?,game_status = ? WHERE id = ?";
 	
-    private final String DELETE_SQL_QUERY = "DELETE FROM " + TBL_NAME + " where ";
+	public final String DELETE_SQL_QUERY = "DELETE FROM " + TBL_NAME + " where ";
 
-    private final String INSERT_SQL_QUERY_V = "INSERT INTO " + TBL_NAME + "(id,userAId,userBId,game_started,game_finished,winner,game_status) VALUES (null,?,?,?,?,?,?)";
+	public final String INSERT_SQL_QUERY_V = "INSERT INTO " + TBL_NAME + "(id,userAId,userBId,game_started,game_finished,winner,game_status) VALUES (null, ?, ?, ?, ?, ?, ?)";
 
     private Integer   id;
     private Integer   userA;

@@ -217,7 +217,32 @@ public class UserProfileServiceImpl implements UserProfileService {
         return null;
     }
 
-    private static UserProfile parseResultSet(ResultSet resultSet) {
+    private static UserProfile parseResultSet(ResultSet set) throws SQLException {
+        if (set != null) {
+            UserProfile userProfile = new UserProfile();
+
+            // TODO Write Log messages
+
+            userProfile.setUserId(set.getInt("id"));
+            userProfile.setFirstName(set.getString("first_name"));
+            userProfile.setLastName(set.getString("last_name"));
+            userProfile.setDob(set.getTimestamp("dob"));
+            userProfile.setEmail(set.getString("email"));
+            userProfile.setAddress1(set.getString("address1"));
+            userProfile.setAddress2(set.getString("address2"));
+            userProfile.setCity(set.getString("city"));
+            userProfile.setState(set.getString("state"));
+            userProfile.setZipCode(set.getString("zip"));
+            userProfile.setCountry(set.getString("country"));
+            userProfile.setIsAdmin(set.getString("is_admin").charAt(0));
+            userProfile.setMobileNumber(set.getLong("mobile_number"));
+            userProfile.setHomeNumber(set.getLong("home_number"));
+            userProfile.setCreationTime(set.getTimestamp("creation_time"));
+            userProfile.setModificationTime(set.getTimestamp("modification_time"));
+
+            return userProfile;
+        }
         return null;
     }
+
 }

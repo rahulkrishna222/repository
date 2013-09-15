@@ -4,15 +4,15 @@ import java.sql.Timestamp;
 
 public class LoginHistory {
 
-    private final String TBL_NAME = "login_history";
+	public final String TBL_NAME = "login_history";
 
-    private final String INSERT_SQL_QUERY = "INSERT INTO " + TBL_NAME + "(id,user_id,last_logged_in_time,machine_ip) VALUES ( ";
+	public final String INSERT_SQL_QUERY = "INSERT INTO " + TBL_NAME + "(id,user_id,last_logged_in_time,machine_ip) VALUES ( ";
 	
-    private final String UPDATE_SQL_QUERY = "UPDATE " + TBL_NAME + " SET ";
+	public final String UPDATE_SQL_QUERY = "UPDATE " + TBL_NAME + " SET user_id = ?,last_logged_in_time = ?,machine_ip = ? WHERE id = ?";
 	
-    private final String DELETE_SQL_QUERY = "DELETE FROM " + TBL_NAME + " where ";
+	public final String DELETE_SQL_QUERY = "DELETE FROM " + TBL_NAME + " where ";
 
-    private final String INSERT_SQL_QUERY_V = "INSERT INTO " + TBL_NAME + "(id,user_id,last_logged_in_time,machine_ip) VALUES (null,?,?,?)";
+	public final String INSERT_SQL_QUERY_V = "INSERT INTO " + TBL_NAME + "(id,user_id,last_logged_in_time,machine_ip) VALUES (null, ?, ?, ?)";
     
     private Integer   id;
     private Integer   userId;
