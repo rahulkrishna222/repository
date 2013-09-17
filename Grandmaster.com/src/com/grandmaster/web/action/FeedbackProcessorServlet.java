@@ -62,9 +62,9 @@ public class FeedbackProcessorServlet extends HttpServlet {
                 // TODO : Write logger info
             }
 
-            List<Object> feedbackList = null;
+            List<Feedback> feedbackList = null;
             try {
-                feedbackList = feedbackService.findAll(start, numOfRecordToRetrive);
+                feedbackList = (List<Feedback>) feedbackService.findAll(start, numOfRecordToRetrive);
             } catch (SQLException e) {
                 // TODO Handle proper exceptions
                 e.printStackTrace();
@@ -87,9 +87,15 @@ public class FeedbackProcessorServlet extends HttpServlet {
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        DBConnector connector = (DBConnector) request.getServletContext().getAttribute("DB_Connector");
-        connector.createConnection();
-        // / feedbackService.
+
+        Feedback feedback = new Feedback();
+        feedback.setName(request.getParameter("txtName"));
+        feedback.setEmail(request.getParameter("email"));
+        feedback.setSubject(request.getParameter("txtSubject"));
+        feedback.setMessage(request.getParameter("txtMessage"));
+        
+        feedbackService.save(feedback);
+
     }
 
 }

@@ -15,6 +15,6 @@ public interface DBOperation {
 
     public <T> T select(Integer id);
 
-    public List<Object> findAll(Integer start, Integer count) throws SQLException;
+    public List<?> findAll(Integer start, Integer count) throws SQLException;
 
 }

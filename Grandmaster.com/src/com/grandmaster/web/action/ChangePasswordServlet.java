@@ -50,14 +50,26 @@ public class ChangePasswordServlet extends HttpServlet {
 
         String password = request.getAttribute("txtPassword") != null ? request.getAttribute("txtPassword").toString() : null;
 
+        String newPassword = request.getAttribute("txtNewPassword") != null ? request.getAttribute("txtNewPassword").toString()
+                : null;
+
         if (user.isAdmin()) {
             // admin can change password of any user
-            userProfileService.changePassword(email, password, true);
+            userProfileService.changePassword(email, password, newPassword, true);
         } else {
 
             if (email.equalsIgnoreCase(user.getEmail())) {
                 // The user trying to change his password
-                int changeResponseCode = userProfileService.changePassword(email, password, user.isAdmin());
+                int changeResponseCode = userProfileService.changePassword(email, password, newPassword, false);
+                /*
+                 * 1 --> User password changed successfully
+                 * -1 --> Current password is wrong
+                 * 2 --> New password is in the last 3 password
+                 * 0 -->
+                 */
+
+                // TODO : Write Code for Forward page with set a message variable with appropriate message
+
             } else {
                 // User trying to change password of someother user.
                 // And its not allowed and only admin can do this operation
@@ -65,8 +77,6 @@ public class ChangePasswordServlet extends HttpServlet {
             }
 
         }
-
-        String username = request.getAttribute("txtUsername").toString();
 
     }
 }

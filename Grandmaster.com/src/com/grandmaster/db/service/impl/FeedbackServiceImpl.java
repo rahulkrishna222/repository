@@ -39,12 +39,12 @@ public class FeedbackServiceImpl implements FeedbackService {
             // (id,email,name,subject,message,status,creation_time)
             prepStmt = connector.getConnection().prepareStatement(Feedback.INSERT_SQL_QUERY_V);
 
-            prepStmt.setString(0, feedback.getEmail());
-            prepStmt.setString(1, feedback.getName());
-            prepStmt.setString(2, feedback.getSubject());
-            prepStmt.setString(3, feedback.getMessage());
-            prepStmt.setObject(4, 'N');
-            prepStmt.setTimestamp(5, new Timestamp((System.currentTimeMillis() / 1000) * 1000));
+            prepStmt.setString(1, feedback.getEmail());
+            prepStmt.setString(2, feedback.getName());
+            prepStmt.setString(3, feedback.getSubject());
+            prepStmt.setString(4, feedback.getMessage());
+            prepStmt.setObject(5, 'N');
+            prepStmt.setTimestamp(6, new Timestamp((System.currentTimeMillis() / 1000) * 1000));
 
             ResultSet feedbackResultSet = prepStmt.executeQuery();
 

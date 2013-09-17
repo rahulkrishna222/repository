@@ -13,8 +13,10 @@ import org.apache.commons.logging.LogFactory;
 
 import com.grandmaster.db.connection.DBConnector;
 
+import com.grandmaster.db.entity.Login;
 import com.grandmaster.db.entity.UserProfile;
 import com.grandmaster.db.service.UserProfileService;
+import com.grandmaster.util.GrandmasterUtil;
 
 public class UserProfileServiceImpl implements UserProfileService {
 
@@ -27,7 +29,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public Object save(Object entity) {
+    public UserProfile save(Object entity) {
         // TODO Write Log messages
 
         connector.createConnection();
@@ -77,7 +79,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public Object update(Object entity, int id) {
+    public UserProfile update(Object entity, int id) {
         connector.createConnection();
 
         UserProfile userProfile = (UserProfile) entity;
@@ -151,7 +153,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public Object select(Integer id) {
+    public UserProfile select(Integer id) {
         try {
             connector.createConnection();
             String selectQuery = "SELECT * FROM " + UserProfile.TBL_NAME + " where id = ?";
@@ -180,7 +182,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public List<Object> findAll(Integer start, Integer count) throws SQLException {
+    public List<UserProfile> findAll(Integer start, Integer count) throws SQLException {
         // Creating connection
 
         // TODO Write Log messages
@@ -196,7 +198,7 @@ public class UserProfileServiceImpl implements UserProfileService {
              */
             ResultSet userProfiles = prepStmt.executeQuery();
             if (userProfiles != null) {
-                List<Object> userProfilesList = new ArrayList<>();
+                List<UserProfile> userProfilesList = new ArrayList<>();
                 while (userProfiles.next()) {
                     UserProfile user = parseResultSet(userProfiles);
                     userProfilesList.add(user);
@@ -243,6 +245,67 @@ public class UserProfileServiceImpl implements UserProfileService {
             return userProfile;
         }
         return null;
+    }
+
+    @Override
+    public int changePassword(String username, String password, String newPassword, boolean isAdmin) {
+        try {
+            connector.getConnection();
+
+            String query = "SELECT * FROM " + Login.TBL_NAME + " WHERE username = ? AND password = ?";
+
+            PreparedStatement pstmt = connector.getConnection().prepareStatement(query);
+            pstmt.setString(0, username);
+            pstmt.setString(2, GrandmasterUtil.getMD5Hash(password));
+
+            ResultSet resultSet = pstmt.executeQuery();
+            if (resultSet != null && resultSet.next()) {
+                // User Password is correct, now check that new password is not in last 3 password
+                String newPasswordHash = GrandmasterUtil.getMD5Hash(newPassword);
+                if (!resultSet.getString("old_password_1").equals(newPasswordHash)
+                        && !resultSet.getString("old_password_2").equals(newPasswordHash)
+                        && !resultSet.getString("old_password_3").equals(newPasswordHash)) {
+                    // All criteria where satisfied now update password
+                    pstmt.close();
+
+                    String updateQuery = "UPDATE " + Login.TBL_NAME
+                            + "SET password = ?, old_password_1 = ?, old_password_2 = ?, old_password_ 3 = ? WHERE id = ?";
+
+                    PreparedStatement updatePstmt = connector.getConnection().prepareStatement(updateQuery);
+
+                    updatePstmt.setString(0, newPasswordHash);
+                    updatePstmt.setString(1, resultSet.getString("password"));
+                    updatePstmt.setString(2, resultSet.getString("old_password_1"));
+                    updatePstmt.setString(3, resultSet.getString("old_password_2"));
+
+                    updatePstmt.setInt(4, resultSet.getInt("id"));
+
+                    int numOfRowsUpdated = updatePstmt.executeUpdate();
+
+                    if (numOfRowsUpdated > 0) { // Means if number if rows updated
+                        // means some record is updated
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+
+                } else {
+                    return 2;
+                }
+            } else {
+                return 1;
+            }
+        } catch (Exception e) {
+            // TODO : Write log message and handle exception
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
+    public boolean retrievePassword(String email, String machineIP) {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

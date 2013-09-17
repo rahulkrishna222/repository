@@ -16,7 +16,6 @@ import com.grandmaster.db.service.impl.UserProfileServiceImpl;
 /**
  * Servlet implementation class LoginServlet
  */
-@WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -42,8 +41,8 @@ public class LoginServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String username = (String) request.getAttribute("txtUsername");
-        String password = (String) request.getAttribute("txtPassword");
+        String username = (String) request.getParameter("txtUsername");
+        String password = (String) request.getParameter("txtPassword");
 
         // TODO Validate username and password (do a null check)
         int userId = loginService.validateLogin(username, password, request.getRemoteAddr());
@@ -61,7 +60,8 @@ public class LoginServlet extends HttpServlet {
             request.getRequestDispatcher("/userHome.jsp").forward(request, response);
         } else {
             // redirect user to login page with a validation error
-            request.getRequestDispatcher("/loginErrorPage.jsp").forward(request, response);
+            request.setAttribute("loginErrorMessage", "<font color = 'RED'>Incorrect Username/Password</font>");
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
 
     }

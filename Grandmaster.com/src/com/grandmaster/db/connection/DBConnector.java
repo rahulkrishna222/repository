@@ -40,13 +40,16 @@ public class DBConnector {
         logger.info("Loading DB properties from file");
         grandMasterProps = new Properties();
         try {            
-            grandMasterProps.load(DBConnector.class.getResourceAsStream(DB_PROPERTY_FILENAME));
-            logger.info("DB properties loaded successfully");
-        } catch (IOException | NullPointerException ioe) {
-            logger.error("IOException | NullPointerExcetion while loading database properties, filename : " + DB_PROPERTY_FILENAME, ioe);
+            //grandMasterProps.load(DBConnector.class.getResourceAsStream(DB_PROPERTY_FILENAME));
             grandMasterProps.putAll(getDefaultDBConfig());
+            logger.info("DB properties loaded successfully");
+        } catch (NullPointerException e) {
+            logger.error("IOException | NullPointerExcetion while loading database properties, filename : " + DB_PROPERTY_FILENAME, e);
+            grandMasterProps.putAll(getDefaultDBConfig());
+        }catch (Exception e) {
+            // TODO: handle exception
         }
-        System.setProperties(grandMasterProps);
+        //System.setProperties(grandMasterProps);
         return true;
     }
 
@@ -54,10 +57,10 @@ public class DBConnector {
         Map<String, String> properties = new HashMap<String, String>();
 
         properties.put("grandmaster.db.host", "localhost");
-        properties.put("grandmaster.db.port", "3303");
-        properties.put("grandmaster.db.name", "grandmaster");
+        properties.put("grandmaster.db.port", "3306");
+        properties.put("grandmaster.db.name", "online_chess");
         properties.put("grandmaster.db.user", "root");
-        properties.put("grandmaster.db.password", "pa$$word");
+        properties.put("grandmaster.db.password", "9847007325");
 
         return properties;
     }
@@ -101,7 +104,7 @@ public class DBConnector {
     }
 
     private static String getDB_URL() {
-        String URL = "jdbc://";
+        String URL = "jdbc:mysql://";
         URL += grandMasterProps.getProperty("grandmaster.db.host") + ":" + grandMasterProps.getProperty("grandmaster.db.port");
         URL += "/" + grandMasterProps.getProperty("grandmaster.db.name");
         return URL;

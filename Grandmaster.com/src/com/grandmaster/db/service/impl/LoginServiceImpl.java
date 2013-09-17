@@ -72,9 +72,12 @@ public class LoginServiceImpl implements LoginService {
             String query = "SELECT * FROM " + Login.TBL_NAME + " WHERE username = ? AND password_hash = ?";
 
             PreparedStatement pstmt = connector.getConnection().prepareStatement(query);
+            pstmt.setString(1, username);
+            pstmt.setString(2, passwordHash);
+
             ResultSet resultSet = pstmt.executeQuery();
 
-            if (pstmt.execute()) {
+            if (resultSet.next()) {
                 // User Login validation successful
                 // Now return the user id
                 // write log messages
@@ -86,7 +89,7 @@ public class LoginServiceImpl implements LoginService {
             }
 
         } catch (SQLException e) {
-            // TODO Write Log messages and handle exception
+            e.printStackTrace();
         } finally {
             try {
                 connector.getConnection().close();
