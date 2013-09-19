@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -29,7 +30,39 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Object save(Object entity) {
-        // TODO Auto-generated method stub
+
+        Login login = (Login) entity;
+        connector.createConnection();
+        PreparedStatement pstmt = null;
+        try {
+            pstmt = connector.getConnection().prepareStatement(Login.INSERT_SQL_QUERY_V);
+            pstmt.setInt(1, login.getUserId());
+            pstmt.setString(2, login.getEmail());
+            pstmt.setString(3, login.getPasswordHash());
+            pstmt.setString(4, null);
+            pstmt.setString(5, null);
+            pstmt.setString(6, null);
+            pstmt.setTimestamp(7, new Timestamp((System.currentTimeMillis() * 1000) / 1000));
+            pstmt.setTimestamp(8, new Timestamp((System.currentTimeMillis() * 1000) / 1000));
+            pstmt.setString(9, String.valueOf(login.getStatus()));
+
+            int rowsAffected = pstmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                return null;
+            }
+            return login;
+        } catch (Exception e) {
+            // TODO: handle exception
+        } finally {
+            try {
+                pstmt.close();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            connector.closeConnection();
+        }
         return null;
     }
 

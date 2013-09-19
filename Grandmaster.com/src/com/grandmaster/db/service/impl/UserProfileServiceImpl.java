@@ -41,29 +41,42 @@ public class UserProfileServiceImpl implements UserProfileService {
             // (id,first_name,last_name,dob,email,address1,address2,city,state,zip,country,
             // mobile_number,home_number,creation_time,modification_time,is_admin)
 
-            prepStmt = connector.getConnection().prepareStatement(UserProfile.INSERT_SQL_QUERY_V);
+            prepStmt = connector.getConnection().prepareStatement(UserProfile.INSERT_SQL_QUERY_V, Statement.RETURN_GENERATED_KEYS);
 
-            prepStmt.setString(0, userProfile.getFirstName());
-            prepStmt.setString(1, userProfile.getLastName());
-            prepStmt.setTimestamp(2, userProfile.getDob());
-            prepStmt.setString(3, userProfile.getEmail());
-            prepStmt.setString(4, userProfile.getAddress1());
-            prepStmt.setString(5, userProfile.getAddress2());
-            prepStmt.setString(6, userProfile.getCity());
-            prepStmt.setString(7, userProfile.getState());
-            prepStmt.setString(8, userProfile.getZipCode());
-            prepStmt.setString(9, userProfile.getCountry());
-            prepStmt.setLong(10, userProfile.getMobileNumber());
-            prepStmt.setLong(11, userProfile.getHomeNumber());
-            prepStmt.setTimestamp(12, new Timestamp((System.currentTimeMillis() * 1000) / 1000));
+            prepStmt.setString(1, userProfile.getFirstName());
+            prepStmt.setString(2, userProfile.getLastName());
+            prepStmt.setTimestamp(3, userProfile.getDob());
+            prepStmt.setString(4, userProfile.getEmail());
+            prepStmt.setString(5, userProfile.getAddress1());
+            prepStmt.setString(6, userProfile.getAddress2());
+            prepStmt.setString(7, userProfile.getCity());
+            prepStmt.setString(8, userProfile.getState());
+            prepStmt.setString(9, userProfile.getZipCode());
+            prepStmt.setString(10, userProfile.getCountry());
+            prepStmt.setLong(11, userProfile.getMobileNumber());
+            prepStmt.setLong(12, userProfile.getHomeNumber());
             prepStmt.setTimestamp(13, new Timestamp((System.currentTimeMillis() * 1000) / 1000));
-            prepStmt.setObject(14, userProfile.getIsAdmin());
+            prepStmt.setTimestamp(14, new Timestamp((System.currentTimeMillis() * 1000) / 1000));
+            prepStmt.setString(15, String.valueOf(userProfile.getIsAdmin()));
 
-            ResultSet newUserResultSet = prepStmt.executeQuery();
+            int rowsAffected = prepStmt.executeUpdate();
 
-            if (newUserResultSet != null) {
-                userProfile = parseResultSet(newUserResultSet);
+            if (rowsAffected == 0) {
+                return null;
+            } else {
+                ResultSet genKey = prepStmt.getGeneratedKeys();
+                if (genKey != null && genKey.next()) {
+                    userProfile.setUserId(genKey.getInt(1));
+                } else {
+                    return null;
+                }
             }
+
+            /*
+             * if (newUserResultSet != null) {
+             * userProfile = parseResultSet(newUserResultSet);
+             * }
+             */
             prepStmt.close();
 
             return userProfile;
@@ -159,7 +172,7 @@ public class UserProfileServiceImpl implements UserProfileService {
             String selectQuery = "SELECT * FROM " + UserProfile.TBL_NAME + " where id = ?";
 
             PreparedStatement prepStmt = connector.getConnection().prepareStatement(selectQuery);
-            prepStmt.setInt(0, id);
+            prepStmt.setInt(1, id);
 
             ResultSet resultSet = prepStmt.executeQuery();
 
@@ -220,7 +233,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     private static UserProfile parseResultSet(ResultSet set) throws SQLException {
-        if (set != null) {
+        if (set != null && set.next()) {
             UserProfile userProfile = new UserProfile();
 
             // TODO Write Log messages

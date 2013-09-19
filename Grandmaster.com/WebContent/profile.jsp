@@ -22,8 +22,7 @@
 		<div id="site_content">
 		<div class="sidebar_center_l">
 					<br />
-
-				
+	<form method="post" action="user/save.do">				
 		<div align="center"> <table width="669" cellpadding="0" cellspacing="7" class="style1">
           <!--class style="background:transparent;"-->
           <tr>
@@ -118,6 +117,7 @@
           </tr>
         </table>
         </div>
+</form>
                </div>
         </div>
         <jsp:include page="footer.jsp" />

@@ -16,9 +16,9 @@ public class Login {
 
     public final String        DELETE_SQL_QUERY   = "DELETE FROM " + TBL_NAME + " where ";
 
-    public final String        INSERT_SQL_QUERY_V = "INSERT INTO "
+    public final static String        INSERT_SQL_QUERY_V = "INSERT INTO "
                                                           + TBL_NAME
-                                                          + "(id,username,password_hash,old_password_1,old_password_2,old_password_3,creation_time,modification_time,status) VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?)";
+                                                          + "(id,username,password_hash,old_password_1,old_password_2,old_password_3,creation_time,modification_time,status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     private Integer            userId;
     private String             email;
