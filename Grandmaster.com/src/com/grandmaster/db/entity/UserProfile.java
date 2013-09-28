@@ -8,17 +8,17 @@ public class UserProfile {
 
     public final static String INSERT_SQL_QUERY   = "INSERT INTO "
                                                           + TBL_NAME
-                                                          + "(id,first_name,last_name,dob,email,address1,address2,city,state,zip,country,mobile_number,home_number,creation_time,modification_time,is_admin) VALUES ( ";
+                                                          + "(id,first_name,last_name,dob,email,address1,address2,city,state,zip,country,mobile_number,home_number,creation_time,modification_time,is_admin,image,rating) VALUES ( ";
 
     public final static String UPDATE_SQL_QUERY   = "UPDATE "
                                                           + TBL_NAME
-                                                          + " SET first_name = ?,last_name = ?,dob = ?,email = ?,address1 = ?,address2 = ?,city = ?,state = ?,zip = ?,country = ?,mobile_number = ?,home_number = ?,creation_time = ?,modification_time = ?,is_admin = ? WHERE id = ?";
+                                                          + " SET first_name = ?,last_name = ?,dob = ?,email = ?,address1 = ?,address2 = ?,city = ?,state = ?,zip = ?,country = ?,mobile_number = ?,home_number = ?,modification_time = ?,is_admin = ? WHERE id = ?";
 
     public final static String DELETE_SQL_QUERY   = "DELETE FROM " + TBL_NAME + " where ";
 
     public final static String INSERT_SQL_QUERY_V = "INSERT INTO "
                                                           + TBL_NAME
-                                                          + "(id,first_name,last_name,dob,email,address1,address2,city,state,zip,country,mobile_number,home_number,creation_time,modification_time,is_admin) VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                                                          + "(id,first_name,last_name,dob,email,address1,address2,city,state,zip,country,mobile_number,home_number,creation_time,modification_time,is_admin,image,rating) VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     private Integer            userId;
     private String             firstName;
@@ -31,9 +31,11 @@ public class UserProfile {
     private String             state;
     private String             zipCode;
     private String             country;
-    private Long               mobileNumber;
-    private Long               homeNumber;
+    private String             mobileNumber;
+    private String             homeNumber;
     private char               isAdmin;
+    private String             imageData;
+    private Integer            rating;
     private Timestamp          creationTime;
     private Timestamp          modificationTime;
 
@@ -60,7 +62,7 @@ public class UserProfile {
      * @param modificationTime
      */
     public UserProfile(Integer userId, String firstName, String lastName, Timestamp dob, String email, String address1,
-            String address2, String city, String state, String zipCode, String country, Long mobileNumber, Long homeNumber,
+            String address2, String city, String state, String zipCode, String country, String mobileNumber, String homeNumber,
             char isAdmin, Timestamp creationTime, Timestamp modificationTime) {
         this.userId = userId;
         this.firstName = firstName;
@@ -248,7 +250,7 @@ public class UserProfile {
     /**
      * @return the mobileNumber
      */
-    public Long getMobileNumber() {
+    public String getMobileNumber() {
         return mobileNumber;
     }
 
@@ -256,14 +258,14 @@ public class UserProfile {
      * @param mobileNumber
      *            the mobileNumber to set
      */
-    public void setMobileNumber(Long mobileNumber) {
+    public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
     }
 
     /**
      * @return the homeNumber
      */
-    public Long getHomeNumber() {
+    public String getHomeNumber() {
         return homeNumber;
     }
 
@@ -271,7 +273,7 @@ public class UserProfile {
      * @param homeNumber
      *            the homeNumber to set
      */
-    public void setHomeNumber(Long homeNumber) {
+    public void setHomeNumber(String homeNumber) {
         this.homeNumber = homeNumber;
     }
 
@@ -358,6 +360,35 @@ public class UserProfile {
                 + ", email=" + email + ", address1=" + address1 + ", address2=" + address2 + ", city=" + city + ", state=" + state
                 + ", zipCode=" + zipCode + ", country=" + country + ", mobileNumber=" + mobileNumber + ", homeNumber=" + homeNumber
                 + ", isAdmin=" + isAdmin + ", creationTime=" + creationTime + ", modificationTime=" + modificationTime + "]";
+    }
+
+    
+    /**
+     * @return the imageData
+     */
+    public String getImageData() {
+        return imageData;
+    }
+
+    /**
+     * @param imageData the imageData to set
+     */
+    public void setImageData(String imageData) {
+        this.imageData = imageData;
+    }
+
+    /**
+     * @return the rating
+     */
+    public Integer getRating() {
+        return rating;
+    }
+
+    /**
+     * @param rating the rating to set
+     */
+    public void setRating(Integer rating) {
+        this.rating = rating;
     }
 
     /*

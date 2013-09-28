@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.grandmaster.db.entity.Login;
+import com.grandmaster.db.entity.UserList;
 import com.grandmaster.db.entity.UserProfile;
 import com.grandmaster.db.service.LoginService;
 import com.grandmaster.db.service.UserProfileService;
@@ -47,6 +48,9 @@ public class UserProfileServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String isNeedAllRecord = request.getParameter("all");
 
+        if (request.getSession(false) == null && request.getSession(false).getAttribute("userId") == null) {
+            request.getRequestDispatcher("/index.jsp").forward(request, response);
+        }
         if (isNeedAllRecord != null && Boolean.valueOf(isNeedAllRecord)) {
 
             int count = -1;
@@ -66,6 +70,14 @@ public class UserProfileServlet extends HttpServlet {
 
             try {
                 List<UserProfile> users = (List<UserProfile>) userProfile.findAll(start, count);
+                if (users != null && !users.isEmpty()) {
+                    UserList userList = new UserList();
+                    userList.setUserProfileList(users);
+                    request.setAttribute("userList", userList);
+
+                    request.getRequestDispatcher("/userListing.jsp").forward(request, response);
+
+                }
             } catch (SQLException e) {
                 // TODO Log messages and handle exception
                 e.printStackTrace();
@@ -83,6 +95,13 @@ public class UserProfileServlet extends HttpServlet {
             }
 
             UserProfile user = (UserProfile) userProfile.select(uid);
+            if (user != null) {
+                request.setAttribute("user", user);
+                if (user.isAdmin())
+                    request.getRequestDispatcher("/adminProfile.jsp").forward(request, response);
+                else
+                    request.getRequestDispatcher("/profile.jsp").forward(request, response);
+            }
         }
     }
 
@@ -92,55 +111,38 @@ public class UserProfileServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         UserProfile user = new UserProfile();
+        if (request.getSession().getAttribute("userId") != null) {
 
-        user.setFirstName(request.getParameter("txtfname"));
-        user.setLastName(request.getParameter("txtlname"));
-        // gender
-        // user.setDob(dob);
-        user.setEmail(request.getParameter("txtemail"));
-        user.setAddress1(request.getParameter("txtAaddr1"));
-        user.setAddress2(request.getParameter("txtAaddr1"));
-        user.setCity(request.getParameter("txtcity"));
-        user.setState(request.getParameter("txtstate"));
-        user.setZipCode(request.getParameter("txtzip"));
-        // user.setCountry(country);
-        user.setMobileNumber(request.getParameter("txtmob") != null ? Long.valueOf(request.getParameter("txtmob")) : 0);
-        System.out.println(">>>>> : "+request.getParameter("txtph"));
-        user.setHomeNumber(request.getParameter("txtph") != null ? Long.valueOf(request.getParameter("txtph")) : 0);
-        // user.setIsAdmin(isAdmin);
-
-        user = userProfile.save(user);
-        if (user.getUserId() != null) {
-            // Successfully create a new user
-            // now add user to the login table
-            Login login = new Login();
-            login.setEmail(user.getEmail());
-            login.setUserId(user.getUserId());
-            String password = String.valueOf(new Random().nextInt());
-            System.out.println(">>>>>>>>>>>>>>>>>>>>> : " + password);
-            try {
-                login.setPasswordHash(GrandmasterUtil.getMD5Hash(password));
-            } catch (NoSuchAlgorithmException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            login.setStatus('A');
-            LoginService loginService = new LoginServiceImpl();
-            login = loginService.save(login);
-            if (login != null) {
-                // TODO entry added to login table.. User now need to activate his account by login to the system using email
-                // we sent to the address and also sent password to email address;
+            if (request.getSession().getAttribute("isAdmin") != null) {
+                user.setIsAdmin('Y');
             } else {
-                // adding user account to the login table failed
-                // rollback the operation
-                userProfile.delete(user.getUserId());
-                // TODO Return to a error page with msg
+                user.setIsAdmin('N');
             }
-        } else {
-            // Failed to create a new user
-            // TODO return error page with msg
-        }
+            user.setFirstName(request.getParameter("txtfname"));
+            user.setLastName(request.getParameter("txtlname"));
+            // gender
+            // user.setDob(dob);
+            user.setEmail(request.getParameter("txtemail"));
+            user.setAddress1(request.getParameter("txtAaddr1"));
+            user.setAddress2(request.getParameter("txtAaddr1"));
+            user.setCity(request.getParameter("txtcity"));
+            user.setState(request.getParameter("txtstate"));
+            user.setZipCode(request.getParameter("txtzip"));
+            // user.setCountry(country);
+            user.setMobileNumber(request.getParameter("txtmob") != null ? request.getParameter("txtmob") : "");
+            System.out.println(">>>>> : " + request.getParameter("txtph"));
+            user.setHomeNumber(request.getParameter("txtph") != null ? request.getParameter("txtph") : "");
+            // user.setIsAdmin(isAdmin);
 
+            user = userProfile.update(user, Integer.parseInt(request.getSession().getAttribute("userId").toString()));
+            if (user != null && user.getUserId() != null) {
+                request.setAttribute("user", user);
+                request.getRequestDispatcher("profile.jsp").forward(request, response);
+            } else {
+                request.setAttribute("message", "Unhandled exception occured");
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+        }
     }
 
 }

@@ -34,9 +34,10 @@
 			<jsp:include page="mainMenu.jsp" />
 		</header>
 		
-
-	
-		                <div class="row-bot">
+<div id="site_content">
+		        
+        
+                <div class="row-bot">
         	       <div class="row-bot-bg">
 					    
                             <div class="gallery p3">
@@ -67,9 +68,10 @@
                                 </div>
                                 <div class="inner">
                                     <div class="wrapper">
-                                        <span class="title img-indent3">HELLO!</span>
+                                        <span class="title img-indent3">HELLO! </span>
                                         <div class="extra-wrap indent-top2">
-                                       <span class="style15">It's never to late to learn how to play chess - the most popular game in   the world! If you are totally new to the game or even want to learn all   of the rules and strategies, read on!   </span>                                     </div>
+                                       <span class="style15">Download high quality chess graphics, wallpapers for a desktop of a chess player, chess fan, artist or an art lover. Big collection of chess wallpapers, images is available for everyone amd is growing every day !  
+                                        <p><a href="http://www.thechessworld.com/graphic/wallpaper">View More</a></span>  </div>
                                     </div>
                                 </div>
                             </div>
@@ -80,7 +82,7 @@
 					</div>
 </div>
 	
-
+</div>
 <br />
 <div>
 <p>

@@ -7,13 +7,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.grandmaster.db.entity.UserProfile;
 import com.grandmaster.db.service.UserProfileService;
 import com.grandmaster.db.service.impl.UserProfileServiceImpl;
 
 /**
  * Servlet implementation class PasswordRetrievalServlet
  */
-@WebServlet("/PasswordRetrievalServlet")
 public class PasswordRetrievalServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -29,7 +29,30 @@ public class PasswordRetrievalServlet extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // TODO Auto-generated method stub
+        if (request.getParameter("UUID") != null){
+            String UUID = request.getParameter("UUID");
+            
+            UserProfileService profileService = new UserProfileServiceImpl();
+            Integer userId = profileService.recoverPassword(UUID);
+            if (userId != null){
+                
+                UserProfile user = profileService.select(userId);
+                
+                if (user != null){
+                    request.setAttribute("UUID", UUID);
+                    request.setAttribute("email", user.getEmail());
+                    request.getRequestDispatcher("/changePassword.jsp").forward(request, response);
+                }else{
+                    String message = "Unable to retirve user details please try again";
+                    request.setAttribute("message", message);
+                    request.getRequestDispatcher("/error.jsp").forward(request, response);
+                }
+            }else{
+                String message = "The URL you trying to reset password is expired, create a new request";
+                request.setAttribute("message", message);
+                request.getRequestDispatcher("/error.jsp").forward(request, response);
+            }
+        }
     }
 
     /**
@@ -42,11 +65,10 @@ public class PasswordRetrievalServlet extends HttpServlet {
         if (email != null && !email.isEmpty()) {
             UserProfileService userProfileService = new UserProfileServiceImpl();
 
-            boolean isSuccess = userProfileService.retrievePassword(email, request.getRemoteAddr());
+            String uuid = userProfileService.retrievePassword(email, request.getRemoteAddr());
             
-            if (!isSuccess){
-                // A user with given email not exists
-                // Forward with a message to notice that email not exists.
+            if (uuid != null){
+                
                 // TODO
             } else{
                 // Initiated process to retrieve password

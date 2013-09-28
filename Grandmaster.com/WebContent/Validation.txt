@@ -1,0 +1,83 @@
+if (empId==null || empId=="")
+  					{
+ 						alert("Employee Id cannot be null");
+						return false;
+  					}
+				
+				/*-------------------Id Validation-------------------------*/
+				var regId= /^[a-z]{2}-[0-9]{2}-[0-9]{2,4}/
+				if(regId.test(empId) == false) 
+					{	 
+      					alert('Invalid Id. Format is two leter-two number-upto five number');
+      					return false;
+   					}
+				
+				if (empName==null || empName=="")
+  					{
+ 						alert("Employee name cannot be null");
+						return false;
+  					}
+				if (desg==null || desg=="")
+  					{
+ 						alert("Designation cannot be null");
+						return false;
+  					}
+				if (dept==null || dept=="")
+  					{
+ 						alert("Department cannot be null");
+						return false;
+  					}
+				if (email==null || email=="")
+  					{
+ 						alert("Email cannot be null");
+						return false;
+  					}
+					
+					
+					/*--------------email Validation----------------------------*/
+				var regEmail = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+				if(regEmail.test(email) == false) 
+					{	 
+      					alert('Invalid Email Address');
+      					return false;
+   					}
+					
+					
+					
+				if (phone==null || phone=="")
+  					{
+ 						alert("Phone Number cannot be null");
+						return false;
+  					}
+					
+					
+			  /*-----------Phone Validation------------------*/
+			  		var regPhone=/^[0-9]{10}/;
+					if(regPhone.test(phone) == false) 
+					{	 
+      					alert('Invalid Phone Number');
+      					return false;
+   					}
+			  	
+			  
+				if (address==null || address=="")
+  					{
+ 						alert("Address cannot be null");
+						return false;
+  					}
+				if (city==null || city=="")
+  					{
+ 						alert("City cannot be null");
+						return false;
+  					}
+				if (country==null || country=="")
+  					{
+ 						alert("Country cannot be null");
+						return false;
+  					}
+				if (state==null || state=="")
+  					{
+ 						alert("state cannot be null");
+						return false;
+  					}
+				

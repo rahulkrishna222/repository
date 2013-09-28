@@ -1,3 +1,4 @@
+
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 
@@ -23,15 +24,17 @@
 					</h3>
 					<form action="login.do" method="Post">
 
-						<label> <span class="style16">Username</span>
-						</label>
+						
 						<div align="center">
+						<label> <span class="style16">Username :</span>
+						</label>
 							<input name="txtUsername" type="text" id="username"> <br />
 							<br />
 						</div>
-						<label> <span class="style16">Password</span>
-						</label>
+						
 						<div align="center">
+						<label> <span class="style16">Password :</span>
+						</label>
 							<input name="txtPassword" type="password" id="password">
 							<br /> <br /> <br />
 						</div>
@@ -48,7 +51,7 @@
 							<%
 							    }
 							%>
-							<br /> <a href="#"><span class="style17">Can't access
+							<br /> <a href="PasswordRecovery.jsp"><span class="style17">Can't access
 									your account ?</span> </a>
 						</div>
 					</form>

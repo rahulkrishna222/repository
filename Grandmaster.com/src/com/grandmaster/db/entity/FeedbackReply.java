@@ -4,26 +4,26 @@ import java.sql.Timestamp;
 
 public class FeedbackReply {
 
-    public final String FEEDBACK_TBL_NAME  = "feedback_reply";
+    public final static String FEEDBACK_TBL_NAME  = "feedback_reply";
 
-    public final String INSERT_SQL_QUERY   = "INSERT INTO "
-                                                   + FEEDBACK_TBL_NAME
-                                                   + "(id,feedback_id,replied_by,reply_message,time_of_reply,modification_time) VALUES ( ";
+    public final String        INSERT_SQL_QUERY   = "INSERT INTO "
+                                                          + FEEDBACK_TBL_NAME
+                                                          + "(id,feedback_id,replied_by,reply_message,time_of_reply,modification_time) VALUES ( ";
 
-    public final String UPDATE_SQL_QUERY   = "UPDATE feedback_reply SET feedback_id = ?,replied_by = ?,reply_message = ?,time_of_reply = ?,modification_time = ? WHERE id = ?";
+    public final String        UPDATE_SQL_QUERY   = "UPDATE feedback_reply SET feedback_id = ?,replied_by = ?,reply_message = ?,time_of_reply = ?,modification_time = ? WHERE id = ?";
 
-    public final String DELETE_SQL_QUERY   = "DELETE FROM feedback_reply where ";
+    public final String        DELETE_SQL_QUERY   = "DELETE FROM feedback_reply where ";
 
-    public final String INSERT_SQL_QUERY_V = "INSERT INTO "
-                                                   + FEEDBACK_TBL_NAME
-                                                   + "(id,feedback_id,replied_by,reply_message,time_of_reply,modification_time) VALUES (null, ?, ?, ?, ?, ?)";
+    public final static String INSERT_SQL_QUERY_V = "INSERT INTO "
+                                                          + FEEDBACK_TBL_NAME
+                                                          + "(id,feedback_id,replied_by,reply_message,time_of_reply,modification_time) VALUES (null, ?, ?, ?, ?, ?)";
 
-    private Integer     id;
-    private Integer     feedbackId;
-    private Integer     repliedByUser;
-    private String      response;
-    private Timestamp   timeOfReply;
-    private Timestamp   modificationTime;
+    private Integer            id;
+    private Integer            feedbackId;
+    private Integer            repliedByUser;
+    private String             response;
+    private Timestamp          timeOfReply;
+    private Timestamp          modificationTime;
 
     public FeedbackReply() {
         // Default constructor

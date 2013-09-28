@@ -1,48 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	id="WebApp_ID" version="3.0">
-	<display-name>Grandmaster.com</display-name>
-	<welcome-file-list>
-		<welcome-file>login.jsp</welcome-file>
-	</welcome-file-list>
-
-	<!-- Servlet Declaration -->
-	<servlet>
-		<servlet-name>feedbackProcessor</servlet-name>
-		<servlet-class>com.grandmaster.web.action.FeedbackProcessorServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-
-	<servlet>
-		<servlet-name>loginProcessor</servlet-name>
-		<servlet-class>com.grandmaster.web.action.LoginServlet</servlet-class>
-	</servlet>
-	
-	<servlet>
-		<servlet-name>userProfile</servlet-name>
-		<servlet-class>com.grandmaster.web.action.UserProfileServlet</servlet-class>
-	</servlet>
-
-	<!-- URL Mappings -->
-	<servlet-mapping>
-		<servlet-name>feedbackProcessor</servlet-name>
-		<url-pattern>/feedback/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>loginProcessor</servlet-name>
-		<url-pattern>/login.do</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>userProfile</servlet-name>
-		<url-pattern>/user/save.do</url-pattern>
-	</servlet-mapping>
-
-	<!-- Listner Declarations -->
-	<listener>
-		<listener-class>com.grandmaster.listener.GrandmasterContextInitializer</listener-class>
-	</listener>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>Grandmaster.com</display-name>
+  <context-param>
+    <description>Location to store uploaded file</description>
+    <param-name>file-upload</param-name>
+    <param-value>
+         D:\img_uploads\
+     </param-value>
+  </context-param>
+  <welcome-file-list>
+    <welcome-file>login.jsp</welcome-file>
+  </welcome-file-list>
+  <servlet>
+    <servlet-name>feedbackProcessor</servlet-name>
+    <servlet-class>com.grandmaster.web.action.FeedbackProcessorServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet>
+    <servlet-name>feedbackReply</servlet-name>
+    <servlet-class>com.grandmaster.web.action.FeedbackReplyServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>loginProcessor</servlet-name>
+    <servlet-class>com.grandmaster.web.action.LoginServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>userProfile</servlet-name>
+    <servlet-class>com.grandmaster.web.action.UserProfileServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>register</servlet-name>
+    <servlet-class>com.grandmaster.web.action.RegistrationServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>changePassword</servlet-name>
+    <servlet-class>com.grandmaster.web.action.ChangePasswordServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>signOutServlet</servlet-name>
+    <servlet-class>com.grandmaster.web.action.LogoutProcessor</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>passwordReset</servlet-name>
+    <servlet-class>com.grandmaster.web.action.PasswordRecovery</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>onlineUser</servlet-name>
+    <servlet-class>com.grandmaster.web.action.OnlineUsers</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>gameProgress</servlet-name>
+    <servlet-class>com.grandmaster.web.action.GameProgressServlet</servlet-class>
+  </servlet>  
+  
+  <servlet-mapping>
+    <servlet-name>feedbackProcessor</servlet-name>
+    <url-pattern>/saveFeedback.html</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>feedbackProcessor</servlet-name>
+    <url-pattern>/feedback_list.html</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>feedbackReply</servlet-name>
+    <url-pattern>/feedback_reply.html</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>loginProcessor</servlet-name>
+    <url-pattern>/login.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>register</servlet-name>
+    <url-pattern>/register.html</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>userProfile</servlet-name>
+    <url-pattern>/user_profile_update.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>userProfile</servlet-name>
+    <url-pattern>/userListing.html</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>userProfile</servlet-name>
+    <url-pattern>/profile.html</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>changePassword</servlet-name>
+    <url-pattern>/changePassword.html</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>signOutServlet</servlet-name>
+    <url-pattern>/logOut.html</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>passwordReset</servlet-name>
+    <url-pattern>/resetPassword.html</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>passwordReset</servlet-name>
+    <url-pattern>/passwordReset.html</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>onlineUser</servlet-name>
+    <url-pattern>/onlineUserList.html</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+  	<servlet-name>gameProgress</servlet-name>
+  	<url-pattern>/gameProgress.do</url-pattern>
+  </servlet-mapping>
+  
+  <listener>
+    <listener-class>com.grandmaster.listener.GrandmasterContextInitializer</listener-class>
+  </listener>
 </web-app>

@@ -1,12 +1,16 @@
 package com.grandmaster.db.service.impl;
 
+import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,6 +18,8 @@ import org.apache.commons.logging.LogFactory;
 import com.grandmaster.db.connection.DBConnector;
 
 import com.grandmaster.db.entity.Login;
+import com.grandmaster.db.entity.PasswordRecovery;
+import com.grandmaster.db.entity.UserList;
 import com.grandmaster.db.entity.UserProfile;
 import com.grandmaster.db.service.UserProfileService;
 import com.grandmaster.util.GrandmasterUtil;
@@ -53,11 +59,14 @@ public class UserProfileServiceImpl implements UserProfileService {
             prepStmt.setString(8, userProfile.getState());
             prepStmt.setString(9, userProfile.getZipCode());
             prepStmt.setString(10, userProfile.getCountry());
-            prepStmt.setLong(11, userProfile.getMobileNumber());
-            prepStmt.setLong(12, userProfile.getHomeNumber());
+            prepStmt.setString(11, userProfile.getMobileNumber());
+            prepStmt.setString(12, userProfile.getHomeNumber());
             prepStmt.setTimestamp(13, new Timestamp((System.currentTimeMillis() * 1000) / 1000));
             prepStmt.setTimestamp(14, new Timestamp((System.currentTimeMillis() * 1000) / 1000));
             prepStmt.setString(15, String.valueOf(userProfile.getIsAdmin()));
+            prepStmt.setString(16,
+                    userProfile.getImageData() != null ? userProfile.getImageData() : GrandmasterUtil.getDefaultImageBase64());
+            prepStmt.setInt(17, 0);
 
             int rowsAffected = prepStmt.executeUpdate();
 
@@ -104,28 +113,28 @@ public class UserProfileServiceImpl implements UserProfileService {
 
             prepStmt = connector.getConnection().prepareStatement(UserProfile.UPDATE_SQL_QUERY);
 
-            prepStmt.setString(0, userProfile.getFirstName());
-            prepStmt.setString(1, userProfile.getLastName());
-            prepStmt.setTimestamp(2, userProfile.getDob());
-            prepStmt.setString(3, userProfile.getEmail());
-            prepStmt.setString(4, userProfile.getAddress1());
-            prepStmt.setString(5, userProfile.getAddress2());
-            prepStmt.setString(6, userProfile.getCity());
-            prepStmt.setString(7, userProfile.getState());
-            prepStmt.setString(8, userProfile.getZipCode());
-            prepStmt.setString(9, userProfile.getCountry());
-            prepStmt.setLong(10, userProfile.getMobileNumber());
-            prepStmt.setLong(11, userProfile.getHomeNumber());
-            prepStmt.setTimestamp(12, new Timestamp((System.currentTimeMillis() * 1000) / 1000));
-            prepStmt.setTimestamp(13, new Timestamp((System.currentTimeMillis() * 1000) / 1000));
-            prepStmt.setObject(14, userProfile.getIsAdmin());
+            prepStmt.setString(1, userProfile.getFirstName());
+            prepStmt.setString(2, userProfile.getLastName());
+            prepStmt.setTimestamp(3, userProfile.getDob());
+            prepStmt.setString(4, userProfile.getEmail());
+            prepStmt.setString(5, userProfile.getAddress1());
+            prepStmt.setString(6, userProfile.getAddress2());
+            prepStmt.setString(7, userProfile.getCity());
+            prepStmt.setString(8, userProfile.getState());
+            prepStmt.setString(9, userProfile.getZipCode());
+            prepStmt.setString(10, userProfile.getCountry());
+            prepStmt.setString(11, userProfile.getMobileNumber());
+            prepStmt.setString(12, userProfile.getHomeNumber());
+            prepStmt.setTimestamp(13, new Timestamp((System.currentTimeMillis() / 1000) * 1000));
+            prepStmt.setString(14, String.valueOf(userProfile.getIsAdmin()));
 
             // Param number 15 is used for where clause. ie., the ID of user.
             prepStmt.setInt(15, id);
-            ResultSet newUserResultSet = prepStmt.executeQuery();
-
-            if (newUserResultSet != null) {
-                userProfile = parseResultSet(newUserResultSet);
+            int rowsAffected = prepStmt.executeUpdate();
+            if (rowsAffected > 0) {
+                userProfile = select(id);
+            } else {
+                return null;
             }
             prepStmt.close();
 
@@ -188,7 +197,7 @@ public class UserProfileServiceImpl implements UserProfileService {
             e.printStackTrace();
             // TODO write proper exception handling codes
         } finally {
-            // TODO Write Log messages
+            connector.closeConnection();
         }
 
         return null;
@@ -212,7 +221,7 @@ public class UserProfileServiceImpl implements UserProfileService {
             ResultSet userProfiles = prepStmt.executeQuery();
             if (userProfiles != null) {
                 List<UserProfile> userProfilesList = new ArrayList<>();
-                while (userProfiles.next()) {
+                while (userProfiles != null && !userProfiles.isAfterLast()) {
                     UserProfile user = parseResultSet(userProfiles);
                     userProfilesList.add(user);
                 }
@@ -250,10 +259,12 @@ public class UserProfileServiceImpl implements UserProfileService {
             userProfile.setZipCode(set.getString("zip"));
             userProfile.setCountry(set.getString("country"));
             userProfile.setIsAdmin(set.getString("is_admin").charAt(0));
-            userProfile.setMobileNumber(set.getLong("mobile_number"));
-            userProfile.setHomeNumber(set.getLong("home_number"));
+            userProfile.setMobileNumber(set.getString("mobile_number"));
+            userProfile.setHomeNumber(set.getString("home_number"));
             userProfile.setCreationTime(set.getTimestamp("creation_time"));
             userProfile.setModificationTime(set.getTimestamp("modification_time"));
+            userProfile.setImageData(set.getString("image"));
+            userProfile.setRating(set.getInt("rating"));
 
             return userProfile;
         }
@@ -265,46 +276,60 @@ public class UserProfileServiceImpl implements UserProfileService {
         try {
             connector.getConnection();
 
-            String query = "SELECT * FROM " + Login.TBL_NAME + " WHERE username = ? AND password = ?";
+            String query = "SELECT * FROM " + Login.TBL_NAME + " WHERE username = ? AND password_hash = ?";
 
             PreparedStatement pstmt = connector.getConnection().prepareStatement(query);
-            pstmt.setString(0, username);
-            pstmt.setString(2, GrandmasterUtil.getMD5Hash(password));
+            pstmt.setString(1, username);
+
+            if (isValidMD5(password)) {
+                pstmt.setString(2, password);
+            } else {
+                pstmt.setString(2, GrandmasterUtil.getMD5Hash(password));
+            }
 
             ResultSet resultSet = pstmt.executeQuery();
             if (resultSet != null && resultSet.next()) {
                 // User Password is correct, now check that new password is not in last 3 password
                 String newPasswordHash = GrandmasterUtil.getMD5Hash(newPassword);
-                if (!resultSet.getString("old_password_1").equals(newPasswordHash)
-                        && !resultSet.getString("old_password_2").equals(newPasswordHash)
-                        && !resultSet.getString("old_password_3").equals(newPasswordHash)) {
-                    // All criteria where satisfied now update password
-                    pstmt.close();
-
-                    String updateQuery = "UPDATE " + Login.TBL_NAME
-                            + "SET password = ?, old_password_1 = ?, old_password_2 = ?, old_password_ 3 = ? WHERE id = ?";
-
-                    PreparedStatement updatePstmt = connector.getConnection().prepareStatement(updateQuery);
-
-                    updatePstmt.setString(0, newPasswordHash);
-                    updatePstmt.setString(1, resultSet.getString("password"));
-                    updatePstmt.setString(2, resultSet.getString("old_password_1"));
-                    updatePstmt.setString(3, resultSet.getString("old_password_2"));
-
-                    updatePstmt.setInt(4, resultSet.getInt("id"));
-
-                    int numOfRowsUpdated = updatePstmt.executeUpdate();
-
-                    if (numOfRowsUpdated > 0) { // Means if number if rows updated
-                        // means some record is updated
-                        return 1;
-                    } else {
-                        return -1;
-                    }
-
-                } else {
+                if (resultSet.getString("old_password_1") != null && resultSet.getString("old_password_1").equals(newPasswordHash)) {
                     return 2;
                 }
+
+                if (resultSet.getString("old_password_2") != null && resultSet.getString("old_password_2").equals(newPasswordHash)) {
+                    return 2;
+                }
+
+                if (resultSet.getString("old_password_2") != null && resultSet.getString("old_password_2").equals(newPasswordHash)) {
+                    return 2;
+                }
+                // All criteria where satisfied now update password
+
+                String updateQuery = "UPDATE " + Login.TBL_NAME
+                        + " SET password_hash = ?, old_password_1 = ?, old_password_2 = ?, old_password_3 = ? WHERE id = ?";
+
+                PreparedStatement updatePstmt = connector.getConnection().prepareStatement(updateQuery);
+
+                updatePstmt.setString(1, newPasswordHash);
+                updatePstmt
+                        .setString(2, resultSet.getString("password_hash") != null ? resultSet.getString("password_hash") : null);
+                updatePstmt.setString(3, resultSet.getString("old_password_1") != null ? resultSet.getString("old_password_1")
+                        : null);
+                updatePstmt.setString(4, resultSet.getString("old_password_2") != null ? resultSet.getString("old_password_1")
+                        : null);
+
+                updatePstmt.setInt(5, resultSet.getInt("id"));
+
+                System.out.println(updatePstmt.toString());
+                int numOfRowsUpdated = updatePstmt.executeUpdate();
+
+                pstmt.close();
+                if (numOfRowsUpdated > 0) { // Means if number if rows updated
+                    // means some record is updated
+                    return 1;
+                } else {
+                    return -1;
+                }
+
             } else {
                 return 1;
             }
@@ -316,9 +341,126 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public boolean retrievePassword(String email, String machineIP) {
-        // TODO Auto-generated method stub
-        return false;
+    public String retrievePassword(String email, String machineIP) {
+
+        connector.createConnection();
+        Integer userId = null;
+
+        try {
+            String query = "select id from user_profile where email = ?";
+            PreparedStatement pstmt = connector.getConnection().prepareStatement(query);
+            pstmt.setString(1, email);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs != null && rs.next()) {
+                userId = rs.getInt(1);
+            } else {
+                return null;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+
+            PreparedStatement pstmt = connector.getConnection().prepareStatement(PasswordRecovery.INSERT_QUERY,
+                    Statement.RETURN_GENERATED_KEYS);
+            pstmt.setInt(1, userId);
+            String uuid = UUID.randomUUID().toString();
+            pstmt.setString(2, uuid);
+            // 86400000ms == 1 day
+            pstmt.setTimestamp(3, new Timestamp(System.currentTimeMillis() + 86400000));
+
+            int numOfRecAffected = pstmt.executeUpdate();
+
+            if (numOfRecAffected > 0) {
+                ResultSet primaryKey = pstmt.getGeneratedKeys();
+                primaryKey.next();
+                Integer pk = primaryKey.getInt(1);
+                if (pk != null) {
+                    return uuid;
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
+    @Override
+    public Integer recoverPassword(String UUID) {
+        connector.createConnection();
+
+        try {
+            String query = "select * from " + PasswordRecovery.TBL_PASSWORD_RECOVERY + " where uuid = ? and expiration_time < ? ";
+
+            PreparedStatement pstmt = connector.getConnection().prepareStatement(query);
+
+            pstmt.setString(1, UUID);
+            pstmt.setTimestamp(2, new Timestamp((System.currentTimeMillis() / 1000) * 1000));
+            System.out.println(pstmt.toString());
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs != null && rs.next()) {
+                Integer userId = rs.getInt("userId");
+                return userId;
+            }
+        } catch (SQLException sqe) {
+            sqe.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public UserList getOnlineUserList() {
+
+        connector.createConnection();
+
+        try {
+
+            String query = "select distinct ol.id as id, up.id as userId, up.country country, concat(up.first_name,' ',up.last_name) as name, up.rating as rank from online_user_list ol, user_profile up where up.id = ol.userId";
+            PreparedStatement pstmt = connector.getConnection().prepareStatement(query);
+
+            ResultSet rs = pstmt.executeQuery();
+            List<Map<String, String>> onlineUserList = null;
+
+            if (rs != null) {
+                Map<String, String> onlineUser = new HashMap<String, String>();
+                onlineUserList = new ArrayList<>();
+                while (rs.next()) {
+                    onlineUser.put("name", rs.getString("name"));
+                    onlineUser.put("country", rs.getString("country"));
+                    onlineUser.put("userId", rs.getString("userId"));
+                    onlineUser.put("rating", rs.getString("rank"));
+
+                    onlineUserList.add(onlineUser);
+                }
+                UserList onlineUsersList = new UserList();
+                onlineUsersList.setOnlineUsers(onlineUserList);
+                
+                return onlineUsersList;
+            } else {
+                return null;
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connector.closeConnection();
+        }
+        return null;
+    }
+
+    public boolean isValidMD5(String s) {
+        return s.matches("[a-fA-F0-9]{32}");
+    }
 }

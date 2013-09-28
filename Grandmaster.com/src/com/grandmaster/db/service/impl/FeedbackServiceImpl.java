@@ -37,19 +37,26 @@ public class FeedbackServiceImpl implements FeedbackService {
         PreparedStatement prepStmt;
         try {
             // (id,email,name,subject,message,status,creation_time)
-            prepStmt = connector.getConnection().prepareStatement(Feedback.INSERT_SQL_QUERY_V);
+            prepStmt = connector.getConnection().prepareStatement(Feedback.INSERT_SQL_QUERY_V, Statement.RETURN_GENERATED_KEYS);
 
             prepStmt.setString(1, feedback.getEmail());
             prepStmt.setString(2, feedback.getName());
             prepStmt.setString(3, feedback.getSubject());
             prepStmt.setString(4, feedback.getMessage());
-            prepStmt.setObject(5, 'N');
+            prepStmt.setString(5, String.valueOf('N'));
             prepStmt.setTimestamp(6, new Timestamp((System.currentTimeMillis() / 1000) * 1000));
 
-            ResultSet feedbackResultSet = prepStmt.executeQuery();
+            int recordCreated = prepStmt.executeUpdate();
 
-            if (feedbackResultSet != null) {
-                feedback = parseResultSet(feedbackResultSet);
+            if (recordCreated > 0) {
+                ResultSet primaryKey = prepStmt.getGeneratedKeys();
+                while (primaryKey != null && primaryKey.next()) {
+                    feedback.setId(primaryKey.getInt(1));
+                    return feedback;
+
+                }
+            } else {
+                return null;
             }
             prepStmt.close();
 
@@ -144,27 +151,26 @@ public class FeedbackServiceImpl implements FeedbackService {
             String selectQuery = "SELECT * FROM " + Feedback.FEEDBACK_TBL_NAME + " where id = ?";
 
             PreparedStatement prepStmt = connector.getConnection().prepareStatement(selectQuery);
-            prepStmt.setInt(0, id);
+            prepStmt.setInt(1, id);
 
             ResultSet resultSet = prepStmt.executeQuery();
 
             Feedback feedback = null;
 
-            if (resultSet != null) {
+            if (resultSet != null && resultSet.next()) {
                 feedback = parseResultSet(resultSet);
             }
-            return feedback;
+            prepStmt.close();
 
+            return feedback;
         } catch (Exception e) {
             // TODO Write Log messages
             e.printStackTrace();
-            // TODO write proper exception handling codes
         } finally {
-            // TODO Write Log messages
+            connector.closeConnection();
         }
 
         return null;
-        // TODO Auto-generated method stub
     }
 
     @Override
@@ -176,12 +182,11 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         PreparedStatement prepStmt;
         try {
-            prepStmt = connector.getConnection().prepareStatement("SELECT * from feedback");
-            /*
-             * Will set later
-             * prepStmt.setInt(0, start);
-             * prepStmt.setInt(1, count);
-             */
+            prepStmt = connector.getConnection().prepareStatement("SELECT * from feedback LIMIT ? OFFSET ?");
+
+            prepStmt.setInt(1, start);
+            prepStmt.setInt(2, count);
+
             ResultSet feedbackResultSet = prepStmt.executeQuery();
             if (feedbackResultSet != null) {
                 List<Object> feedbackList = new ArrayList<>();

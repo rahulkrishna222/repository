@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.grandmaster.db.connection.DBConnector;
 import com.grandmaster.db.entity.Login;
+import com.grandmaster.db.entity.UserProfile;
 import com.grandmaster.db.service.LoginService;
 import com.grandmaster.db.service.UserProfileService;
 import com.grandmaster.util.GrandmasterUtil;
@@ -42,8 +43,8 @@ public class LoginServiceImpl implements LoginService {
             pstmt.setString(4, null);
             pstmt.setString(5, null);
             pstmt.setString(6, null);
-            pstmt.setTimestamp(7, new Timestamp((System.currentTimeMillis() * 1000) / 1000));
-            pstmt.setTimestamp(8, new Timestamp((System.currentTimeMillis() * 1000) / 1000));
+            pstmt.setTimestamp(7, new Timestamp((System.currentTimeMillis() / 1000) * 1000));
+            pstmt.setTimestamp(8, new Timestamp((System.currentTimeMillis() / 1000) * 1000));
             pstmt.setString(9, String.valueOf(login.getStatus()));
 
             int rowsAffected = pstmt.executeUpdate();
@@ -80,7 +81,30 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Object select(Integer id) {
-        // TODO Auto-generated method stub
+        try {
+            connector.createConnection();
+            String selectQuery = "SELECT * FROM " + Login.TBL_NAME + " where id = ?";
+
+            PreparedStatement prepStmt = connector.getConnection().prepareStatement(selectQuery);
+            prepStmt.setInt(1, id);
+
+            ResultSet resultSet = prepStmt.executeQuery();
+
+            Login login = null;
+
+            if (resultSet != null) {
+                login = parseResultSet(resultSet);
+            }
+            return login;
+
+        } catch (Exception e) {
+            // TODO Write Log messages
+            e.printStackTrace();
+            // TODO write proper exception handling codes
+        } finally {
+            connector.closeConnection();
+        }
+
         return null;
     }
 
@@ -132,6 +156,68 @@ public class LoginServiceImpl implements LoginService {
             }
         }
         return null;
+    }
+
+    public boolean addUserToOnlineList(Integer userId, String remoteIP) {
+        connector.createConnection();
+        try {
+            final String SQL = "insert into online_user_list values(null,?,?,?)";
+
+            PreparedStatement pstmt = connector.getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
+
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, remoteIP);
+            pstmt.setTimestamp(3, new Timestamp((System.currentTimeMillis() * 1000) / 1000));
+
+            int numRecAffected = pstmt.executeUpdate();
+
+            if (numRecAffected > 0) {
+                ResultSet genKey = pstmt.getGeneratedKeys();
+
+                if (genKey != null && genKey.next()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connector.closeConnection();
+        }
+        return false;
+    }
+
+    public boolean removeUserFromOnlineList(Integer userId) {
+        connector.createConnection();
+        try {
+            final String SQL = "delete from online_user_list where userId = ?";
+
+            PreparedStatement pstmt = connector.getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
+
+            pstmt.setInt(1, userId);
+
+            int numRecAffected = pstmt.executeUpdate();
+
+            if (numRecAffected > 0) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connector.closeConnection();
+        }
+        return false;
     }
 
     private static Login parseResultSet(ResultSet set) throws SQLException {

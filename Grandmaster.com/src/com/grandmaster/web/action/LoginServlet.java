@@ -55,9 +55,22 @@ public class LoginServlet extends HttpServlet {
             UserProfileService profileService = new UserProfileServiceImpl();
             UserProfile user = profileService.select(userId);
             request.getSession(true).setAttribute("userId", userId);
-            request.getSession().setAttribute("Name", user.getFirstName() + " " + user.getLastName());
+            request.getSession().setAttribute("uName", user.getEmail());
+            request.getSession().setAttribute("name", user.getFirstName() + " " + user.getLastName());
+            request.getSession().setAttribute("isAdmin", user.isAdmin());
+            
+            request.getSession().setAttribute("userImage", user.getImageData());
+            if (loginService.addUserToOnlineList(userId, request.getRemoteAddr())){
+                System.out.println("User added to online_user_list");
+            }else{
+                System.out.println("Can't add User to online_user_list");
+            }
 
-            request.getRequestDispatcher("/userHome.jsp").forward(request, response);
+            if (user.isAdmin()) {
+                request.getRequestDispatcher("/Admin.jsp").forward(request, response);
+            } else {
+                request.getRequestDispatcher("/home.jsp").forward(request, response);
+            }
         } else {
             // redirect user to login page with a validation error
             request.setAttribute("loginErrorMessage", "<font color = 'RED'>Incorrect Username/Password</font>");
